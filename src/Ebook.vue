@@ -1,21 +1,7 @@
 <template>
 <div class="ebook">
-  <div class="title-wrapper" v-show="ifTitleAndMenuShow">
-    <div class="left">
-      <span class="ion-arrow-left-a icon"></span>
-    </div>
-    <div class="right">
-      <div class="icon-wrapper">
-        <span class="ion-ios-cart icon"></span>
-      </div>
-      <div class="icon-wrapper">
-        <span class="ion-person icon"></span>
-      </div>
-      <div class="icon-wrapper">
-        <span class="ion-android-more-vertical icon"></span>
-      </div>
-    </div>
-  </div>
+<!--  传递变量到组件-->
+  <title-bar :ifTitleAndMenuShow="ifTitleAndMenuShow"></title-bar>
   <div class="read-wrapper">
     <div id="read"></div>
     <div class="mask">
@@ -24,28 +10,22 @@
       <div class="right" @click="nextPage()"></div>
     </div>
   </div>
-  <div class="menu-wrapper" v-show="ifTitleAndMenuShow">
-    <div class="icon-wrapper">
-      <span class="ion-android-menu icon"></span>
-    </div>
-    <div class="icon-wrapper">
-      <span class="ion-ios-circle-filled icon"></span>
-    </div>
-    <div class="icon-wrapper">
-      <span class="ion-android-sunny icon"></span>
-    </div>
-    <div class="icon-wrapper">
-      <span class="ion-edit icon"></span>
-    </div>
-  </div>
+<!--  传递变量到组件-->
+  <menu-bar :ifTitleAndMenuShow="ifTitleAndMenuShow" ref="menuBar"></menu-bar>
 </div>
 </template>
 
 <script>
+import TitleBar from './components/TitleBar'
+import MenuBar from './components/MenuBar'
 import Epub from 'epubjs'
 const DOWNLOAD_URL = '../static/book.epub'
 global.ePub = Epub
 export default {
+  components: {
+    TitleBar,
+    MenuBar
+  },
   data () {
     return {
       ifTitleAndMenuShow: false
@@ -66,19 +46,23 @@ export default {
       this.rendition.display()
     },
     prevPage () {
-      //Rendition prev
+      // Rendition prev
       if (this.rendition) {
-        this.rendition.prev();
+        this.rendition.prev()
       }
     },
     nextPage () {
-      //Rendition next
+      // Rendition next
       if (this.rendition) {
-        this.rendition.next();
+        this.rendition.next()
       }
     },
     toggleTitleAndMenu () {
-      this.ifTitleAndMenuShow = !this.ifTitleAndMenuShow;
+      this.ifTitleAndMenuShow = !this.ifTitleAndMenuShow
+      if (!this.ifTitleAndMenuShow) {
+        // 相当于dom选择器，可以选择dom后调用下面的方法
+        this.$refs.menuBar.hideSetting()
+      }
     }
   },
   // 构造函数
@@ -145,21 +129,6 @@ export default {
         flex: 0 0  px2rem(100);
         /*background: orange;*/
       }
-    }
-  }
-  .menu-wrapper {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    z-index: 101;
-    display: flex;
-    height: px2rem(48);
-    background: white;
-    box-shadow: 0 px2rem(-8) px2rem(8) rgba(0, 0, 0, 0.15);
-    .icon-wrapper {
-      flex: 1;
-      @include center;
     }
   }
 }
