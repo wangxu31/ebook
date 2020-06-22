@@ -11,7 +11,7 @@
     </div>
   </div>
 <!--  传递变量到组件-->
-  <menu-bar :ifTitleAndMenuShow="ifTitleAndMenuShow" ref="menuBar"></menu-bar>
+  <menu-bar :ifTitleAndMenuShow="ifTitleAndMenuShow" :fontSizeList="fontSizeList" :defaultFontSize="defaultFontSize" @setFontSize="setFontSize" ref="menuBar"></menu-bar>
 </div>
 </template>
 
@@ -28,10 +28,60 @@ export default {
   },
   data () {
     return {
-      ifTitleAndMenuShow: false
+      ifTitleAndMenuShow: false,
+      fontSizeList: [
+        {fontSize: 12},
+        {fontSize: 14},
+        {fontSize: 16},
+        {fontSize: 18},
+        {fontSize: 20},
+        {fontSize: 22},
+        {fontSize: 24}
+      ],
+      defaultFontSize: 16,
+      themeList: [
+        {
+          name: 'default',
+          style: {
+            body: {
+              'color': '#000', 'background': '#fff'
+            }
+          }
+        },
+        {
+          name: 'eye',
+          style: {
+            body: {
+              'color': '#000', 'background': '#ceeaba'
+            }
+          }
+        },
+        {
+          name: 'night',
+          style: {
+            body: {
+              'color': '#fff', 'background': '#000'
+            }
+          }
+        },
+
+        {
+          name: 'gold',
+          style: {
+            body: {
+              'color': '#000', 'background': 'rgb(241, 236, 226)'
+            }
+          }
+        }
+      ]
     }
   },
   methods: {
+    registerTheme() {
+      this.themeList.forEach(theme => {
+        this.themes.register(theme.name, theme.style)
+      })
+    },
     // 电子书解析和渲染
     showEpub () {
       // 生成book
@@ -44,6 +94,14 @@ export default {
       })
       // 通过rendition.display渲染电子书
       this.rendition.display()
+      // 获取Theme对象，保存在本地一个变量里
+      this.themes = this.rendition.themes
+      // 设置默认字体
+      this.setFontSize(this.defaultFontSize)
+      // this.themes.register(name, styles)
+      // this.themes.select(name)
+      this.registerTheme()
+      this.themes.select('night')
     },
     prevPage () {
       // Rendition prev
@@ -62,6 +120,13 @@ export default {
       if (!this.ifTitleAndMenuShow) {
         // 相当于dom选择器，可以选择dom后调用下面的方法
         this.$refs.menuBar.hideSetting()
+      }
+    },
+    setFontSize(fontSize) {
+      this.defaultFontSize = fontSize
+      // 接收子组件参数进行处理
+      if (this.themes) {
+        this.themes.fontSize(fontSize + 'px')
       }
     }
   },
