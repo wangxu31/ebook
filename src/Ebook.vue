@@ -11,7 +11,14 @@
     </div>
   </div>
 <!--  传递变量到组件-->
-  <menu-bar :ifTitleAndMenuShow="ifTitleAndMenuShow" :fontSizeList="fontSizeList" :defaultFontSize="defaultFontSize" @setFontSize="setFontSize" ref="menuBar"></menu-bar>
+  <menu-bar :ifTitleAndMenuShow="ifTitleAndMenuShow"
+            :fontSizeList="fontSizeList"
+            :defaultFontSize="defaultFontSize"
+            @setFontSize="setFontSize"
+            :themeList="themeList"
+            :defaultTheme="defaultTheme"
+            @setTheme="setTheme"
+            ref="menuBar"></menu-bar>
 </div>
 </template>
 
@@ -73,10 +80,15 @@ export default {
             }
           }
         }
-      ]
+      ],
+      defaultTheme: 0
     }
   },
   methods: {
+    setTheme(index) {
+      this.themes.select(this.themeList[index].name)
+      this.defaultTheme = index
+    },
     registerTheme() {
       this.themeList.forEach(theme => {
         this.themes.register(theme.name, theme.style)
@@ -101,7 +113,9 @@ export default {
       // this.themes.register(name, styles)
       // this.themes.select(name)
       this.registerTheme()
-      this.themes.select('night')
+      this.themes.select('default')
+      // alert(this.themes.themeList[index])
+      this.setTheme(this.defaultTheme)
     },
     prevPage () {
       // Rendition prev
@@ -132,11 +146,11 @@ export default {
   },
   // 构造函数
   mounted () {
-    console.log('mounted ebook')
+    // console.log('mounted ebook')
     this.showEpub()
   },
   created () {
-    console.log('created ebook')
+    // console.log('created ebook')
   }
 }
 </script>
